@@ -297,6 +297,40 @@ void Painter::DrawImage(const uint8_t* data, uint16_t x, uint16_t y, uint16_t wi
     }
 }
 
+void Painter::DrawIcon(const uint8_t* data, uint16_t x, uint16_t y, uint16_t width,
+                       uint16_t height, uint16_t color, uint16_t backgroundcolor)
+{
+    uint8_t bitNumber = 8;
+    uint16_t arrayIndex = 0;
+    uint8_t buffer;
+    uint16_t yCordinate;
+    height = height + y;
+    width  = width + x;
+    
+    for (uint16_t yIndex = y; yIndex < height; yIndex++)
+    {             
+        for (uint16_t xIndex = x; xIndex < width; xIndex++)
+        {
+            if (bitNumber == 8)
+            {
+                buffer = data[arrayIndex];
+                arrayIndex++;
+                bitNumber = 0;
+            }
+            if ((buffer >> bitNumber) & 1)
+            {
+                DrawPixel(xIndex, yIndex, color);
+            }
+            else
+            {
+                DrawPixel(xIndex, yIndex, backgroundcolor);
+            }
+            
+            bitNumber++;
+        }
+    }
+}
+
 uint8_t count = 0;
 
 void Painter::DrawText(uint16_t x, uint16_t y, const char* text, uint16_t color, Font font, TextAlign align,

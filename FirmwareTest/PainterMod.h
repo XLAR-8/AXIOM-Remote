@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include "images/test_logo.h"
+#include "images/output.h"
 #include "../Firmware/UI/Painter.h"
 
 #define FRAMEBUFFER_WIDTH 320

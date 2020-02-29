@@ -41,7 +41,16 @@ TEST_CASE("DrawFastHLine test")
 
     REQUIRE(painter.wrongDirection == false);
 }
+TEST_CASE("DrawIcon test")
+{
+    uint16_t* framebuffer = new uint16_t[FRAMEBUFFER_WIDTH * FRAMEBUFFER_HEIGHT];
+    PainterMod painter(framebuffer, FRAMEBUFFER_WIDTH, FRAMEBUFFER_HEIGHT);
+    uint8_t *a = new uint8_t[16 * 16];
+    memset(a, 0, 16*16);
+    painter.DrawIcon(a, 0, 0, 16, 16, 0xFFFF);
 
+    REQUIRE(painter.wrongDirection == false);
+}
 TEST_CASE("DrawFillRoundRectangle test")
 {
     uint16_t* framebuffer = new uint16_t[FRAMEBUFFER_WIDTH * FRAMEBUFFER_HEIGHT];
@@ -135,3 +144,22 @@ TEST_CASE("DrawPixel test")
 
     REQUIRE(painter.GetPixel(20, 30) == 0x53);
 }
+
+TEST_CASE("DrawIcon test")
+{
+    uint16_t* framebuffer = new uint16_t[16 * 16];
+    std::memset(framebuffer, 0, 16 * 16);
+    PainterMod painter(framebuffer, 16, 16);
+
+    painter.DrawIcon(test_logo.pixel_data, 8, 8, test_logo.width, test_logo.height, 0xF800);
+
+    for (uint16_t yIndex = 0; yIndex < 16; yIndex++)
+    {   
+        for (uint16_t xIndex = 0; xIndex < 16; xIndex++)
+        {               
+            
+            REQUIRE(painter.GetPixel(yIndex, xIndex) == expectedOutput.color_data[yindex*16 + xIndex]);
+        }
+    }
+}  
+
