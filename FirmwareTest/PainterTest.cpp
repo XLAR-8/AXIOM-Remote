@@ -150,6 +150,7 @@ TEST_CASE("DrawIcon test")
     uint16_t* framebuffer = new uint16_t[16 * 16];
     std::memset(framebuffer, 0, 16 * 16);
     PainterMod painter(framebuffer, 16, 16);
+    bool flag = true;
 
     painter.DrawIcon(test_logo.pixel_data, 8, 8, test_logo.width, test_logo.height, 0xF800);
 
@@ -158,8 +159,15 @@ TEST_CASE("DrawIcon test")
         for (uint16_t xIndex = 0; xIndex < 16; xIndex++)
         {               
             
-            REQUIRE(painter.GetPixel(yIndex, xIndex) == expectedOutput.color_data[yindex*16 + xIndex]);
+            if(painter.GetPixel(yIndex, xIndex) != expectedOutput.color_data[yindex*16 + xIndex]);
+            {   
+                flag = false;
+                break;
+            }   
+            
         }
     }
+    
+    REQUIRE(flag == true);
 }  
 
