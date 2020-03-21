@@ -41,16 +41,7 @@ TEST_CASE("DrawFastHLine test")
 
     REQUIRE(painter.wrongDirection == false);
 }
-TEST_CASE("DrawIcon test")
-{
-    uint16_t* framebuffer = new uint16_t[FRAMEBUFFER_WIDTH * FRAMEBUFFER_HEIGHT];
-    PainterMod painter(framebuffer, FRAMEBUFFER_WIDTH, FRAMEBUFFER_HEIGHT);
-    uint8_t *a = new uint8_t[16 * 16];
-    memset(a, 0, 16*16);
-    painter.DrawIcon(a, 0, 0, 16, 16, 0xFFFF);
 
-    REQUIRE(painter.wrongDirection == false);
-}
 TEST_CASE("DrawFillRoundRectangle test")
 {
     uint16_t* framebuffer = new uint16_t[FRAMEBUFFER_WIDTH * FRAMEBUFFER_HEIGHT];
@@ -147,27 +138,34 @@ TEST_CASE("DrawPixel test")
 
 TEST_CASE("DrawIcon test")
 {
-    uint16_t* framebuffer = new uint16_t[16 * 16];
-    std::memset(framebuffer, 0, 16 * 16);
-    PainterMod painter(framebuffer, 16, 16);
-    bool flag = true;
+    uint16_t expectedOutput[] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, //
+                                 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, //
+                                 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, //
+                                 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, //
+                                 0x0, 0x0, 0x4, 0x4, 0x0, 0x0, 0x0, //
+                                 0x0, 0x0, 0x0, 0x4, 0x4, 0x0, 0x0, //
+                                 0x0, 0x0, 0x0, 0x0, 0x4, 0x0, 0x0};
 
-    painter.DrawIcon(test_logo.pixel_data, 8, 8, test_logo.width, test_logo.height, 0xF800);
+    uint8_t width = 7;
+    uint8_t height = 7;
 
-    for (uint16_t yIndex = 0; yIndex < 16; yIndex++)
-    {   
-        for (uint16_t xIndex = 0; xIndex < 16; xIndex++)
-        {               
-            
-            if(painter.GetPixel(yIndex, xIndex) != expectedOutput.color_data[yindex*16 + xIndex]);
-            {   
-                flag = false;
-                break;
-            }   
-            
+    uint16_t* framebuffer = SetupFramebuffer(width, height);
+    PainterMod painter(framebuffer, width, height);
+     
+    painter.DrawIcon(test_logo.pixel_data, 2, 2, test_logo.width, test_logo.height, 0x4);
+    
+    bool correctOutput = true;
+    uint8_t pixelIndex = 0;
+    for (; pixelIndex < width * height; pixelIndex++)
+    {
+        if (framebuffer[pixelIndex] != expectedOutput[pixelIndex])
+        {
+            correctOutput = false;
+            break;
         }
     }
-    
-    REQUIRE(flag == true);
-}  
+
+    REQUIRE(pixelIndex == 49);
+    REQUIRE(correctOutput == true);
+}
 
